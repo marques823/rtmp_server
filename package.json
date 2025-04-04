@@ -1,0 +1,21 @@
+{
+  "name": "rtmp-server",
+  "version": "1.0.0",
+  "description": "Servidor RTMP para Gravação de CFTV",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "cleanup": "node cleanup.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["rtmp", "cftv", "streaming", "video"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "node-media-server": "^4.0.12"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
