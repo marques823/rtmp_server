@@ -73,7 +73,21 @@ Substitua `[stream-key]` por um identificador único para cada câmera (ex: came
 
 ### Visualizar streams:
 
-Abra o arquivo `player.html` em um navegador e digite a stream key da câmera que deseja visualizar.
+Acesse a interface web para visualizar os players disponíveis:
+
+```
+http://seu-servidor:9000/
+```
+
+Opções de visualização:
+- **Player Básico**: Para visualizar uma única câmera por vez
+- **Multi-Camera Viewer**: Interface avançada para visualização de múltiplas câmeras em grade
+
+Você também pode acessar os players diretamente:
+```
+http://seu-servidor:9000/player.html      # Player básico
+http://seu-servidor:9000/multi-player.html # Player multi-câmera
+```
 
 ### Relay de streams para outro servidor:
 
