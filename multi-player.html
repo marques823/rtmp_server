@@ -351,10 +351,17 @@
                 </button>
             </div>
             
+            <div style="margin-top: 15px; padding: 10px; background-color: rgba(246, 229, 141, 0.2); border-radius: 4px;">
+                <p style="margin-bottom: 10px;"><i class="fas fa-info-circle"></i> Para testar rapidamente, adicione uma câmera de teste:</p>
+                <button class="btn btn-success" onclick="addTestCamera()">
+                    <i class="fas fa-plus-circle"></i> Adicionar Câmera de Teste (camera2)
+                </button>
+            </div>
+            
             <div class="stream-format-selector">
-                <div class="stream-format-option active" data-format="hls">HLS</div>
-                <div class="stream-format-option" data-format="flv">HTTP-FLV</div>
-                <div class="stream-format-option" data-format="rtmp">RTMP</div>
+                <div class="stream-format-option" data-format="hls">HLS</div>
+                <div class="stream-format-option active" data-format="flv">HTTP-FLV</div>
+                <div class="stream-format-option" data-format="rtmp">RTMP (via FLV)</div>
             </div>
         </div>
         
@@ -390,16 +397,25 @@
     </div>
 
     <script src="https://vjs.zencdn.net/7.20.3/video.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/videojs-flash@2/dist/videojs-flash.min.js"></script>
+    <!-- Remover o plugin Flash obsoleto -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/videojs-flash@2/dist/videojs-flash.min.js"></script> -->
     <script src="https://cdn.jsdelivr.net/npm/flv.js@1.6.2/dist/flv.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/videojs-flvjs@0.2.0/dist/videojs-flvjs.min.js"></script>
     <script>
+        // Verificar suporte a flv.js
+        if (flvjs.isSupported()) {
+            console.log('flv.js é suportado!');
+        } else {
+            console.error('flv.js não é suportado neste navegador');
+            alert('Seu navegador não suporta a reprodução de streams FLV. Por favor, use um navegador moderno como Chrome, Firefox ou Edge.');
+        }
+        
         // Configurações
         const config = {
             serverHost: window.location.hostname,
             rtmpPort: 1936,
             httpPort: 8090,
-            defaultFormat: 'hls'
+            defaultFormat: 'flv'
         };
         
         // Estado da aplicação
@@ -457,7 +473,8 @@
                 case 'flv':
                     return `http://${config.serverHost}:${config.httpPort}/live/${streamKey}.flv`;
                 case 'rtmp':
-                    return `rtmp://${config.serverHost}:${config.rtmpPort}/live/${streamKey}`;
+                    // RTMP não é mais recomendado, usar FLV via HTTP como alternativa
+                    return `http://${config.serverHost}:${config.httpPort}/live/${streamKey}.flv`;
                 default:
                     return `http://${config.serverHost}:${config.httpPort}/live/${streamKey}/index.m3u8`;
             }
@@ -471,7 +488,8 @@
                 case 'flv':
                     return 'video/x-flv';
                 case 'rtmp':
-                    return 'rtmp/flv';
+                    // RTMP não é mais suportado, usar FLV
+                    return 'video/x-flv';
                 default:
                     return 'application/x-mpegURL';
             }
@@ -698,6 +716,11 @@
             }
         }
         
+        // Adicionar câmera de teste
+        function addTestCamera() {
+            addCamera('Câmera de Teste', 'camera2');
+        }
+        
         // Inicialização
         document.addEventListener('DOMContentLoaded', function() {
             // Carregar câmeras salvas
@@ -741,6 +764,7 @@
         window.closeFullscreen = closeFullscreen;
         window.refreshCamera = refreshCamera;
         window.refreshAllCameras = refreshAllCameras;
+        window.addTestCamera = addTestCamera;
     </script>
 </body>
 </html>
