@@ -218,7 +218,7 @@
                 </div>
                 <div class="status-item">
                     <div class="status-label"><i class="fas fa-globe"></i> Porta HTTP</div>
-                    <div class="status-value">8090</div>
+                    <div class="status-value">8095</div>
                 </div>
                 <div class="status-item">
                     <div class="status-label"><i class="fas fa-folder-open"></i> Diretório de Mídia</div>
@@ -285,9 +285,9 @@
             <h3>Formatos de Stream Disponíveis:</h3>
             <ul>
                 <li><strong>RTMP:</strong> rtmp://<span class="server-host">seu-servidor</span>:1936/live/[stream-key]</li>
-                <li><strong>HLS:</strong> http://<span class="server-host">seu-servidor</span>:8090/live/[stream-key]/index.m3u8</li>
-                <li><strong>HTTP-FLV:</strong> http://<span class="server-host">seu-servidor</span>:8090/live/[stream-key].flv</li>
-                <li><strong>DASH:</strong> http://<span class="server-host">seu-servidor</span>:8090/live/[stream-key]/index.mpd</li>
+                <li><strong>HLS:</strong> http://<span class="server-host">seu-servidor</span>:8095/live/[stream-key]/index.m3u8</li>
+                <li><strong>HTTP-FLV:</strong> http://<span class="server-host">seu-servidor</span>:8095/live/[stream-key].flv</li>
+                <li><strong>DASH:</strong> http://<span class="server-host">seu-servidor</span>:8095/live/[stream-key]/index.mpd</li>
             </ul>
         </div>
     </div>
@@ -306,7 +306,7 @@
             });
             
             // Verificar status do servidor
-            fetch(`http://${serverHost}:8090/api/streams`)
+            fetch(`http://${serverHost}:8095/api/streams`)
                 .then(response => {
                     document.getElementById('server-status').textContent = 'Online';
                     document.getElementById('server-status').style.color = '#2ecc71';

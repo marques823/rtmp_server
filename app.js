@@ -41,17 +41,32 @@ console.log(JSON.stringify(rtmpConfig, null, 2));
 // Create and start the server
 const nms = new NodeMediaServer(rtmpConfig);
 
-// Register event handlers
+// Configurar API separadamente
+const apiApp = express();
+const apiPort = config.http.port + 1; // Usar porta 8096
+const setupApi = require('./api');
+setupApi(apiApp);
+
+// Iniciar o servidor API
+const apiServer = apiApp.listen(apiPort, () => {
+  console.log(`API Server listening on port ${apiPort}`);
+  console.log(`API: http://localhost:${apiPort}/api`);
+  console.log(`Recordings: http://localhost:${apiPort}/recordings/[camera]`);
+});
+
+// Register event handlers for RTMP server
 nms.on('prePublish', (id, StreamPath, args) => {
   console.log('[NodeEvent on prePublish]', `id=${id} StreamPath=${StreamPath} args=${JSON.stringify(args)}`);
   
   // Extract stream name from the path (/live/stream-name)
   const streamName = StreamPath.split('/')[2];
+  console.log(`[Debug] Stream name extracted: ${streamName}`);
   
   // Verificar se a gravação automática está habilitada para esta câmera
   const cameraConfig = storageConfig.cameras[streamName] || {};
   const globalConfig = storageConfig.global;
   const autoRecord = cameraConfig.autoRecord !== undefined ? cameraConfig.autoRecord : globalConfig.autoRecord;
+  console.log(`[Debug] Auto record for ${streamName}: ${autoRecord ? 'enabled' : 'disabled'}`);
   
   if (autoRecord) {
     // A URL do stream será rtmp://localhost:porta/live/stream-name
@@ -60,7 +75,12 @@ nms.on('prePublish', (id, StreamPath, args) => {
     
     // Aguardar um momento para garantir que o stream esteja estabelecido
     setTimeout(() => {
-      storageManager.startRecording(streamName, streamUrl);
+      try {
+        const result = storageManager.startRecording(streamName, streamUrl);
+        console.log(`[Debug] Recording start result: ${result ? 'success' : 'failed'}`);
+      } catch (err) {
+        console.error(`[Error] Failed to start recording: ${err.message}`);
+      }
     }, 2000);
   }
 });
@@ -88,18 +108,7 @@ setInterval(runScheduledCleanup, DAILY_CLEANUP_TIME);
 // Executar limpeza inicial ao iniciar
 setTimeout(runScheduledCleanup, 10000);
 
-// Interceptar o servidor HTTP do Node Media Server para adicionar nossas rotas
-nms.on('postHttp', (httpServer) => {
-  console.log('HTTP Server initialized, setting up API routes...');
-  
-  // Obter a instância do app Express que o NodeMediaServer usa
-  const app = httpServer._events.request;
-  
-  // Configurar nossa API
-  const setupApi = require('./api');
-  setupApi(app, httpServer);
-});
-
+// Iniciar servidor RTMP
 nms.run();
 
 // Log server start
@@ -109,5 +118,3 @@ console.log(`HTTP-FLV: http://localhost:${config.http.port}/live/[stream-key].fl
 console.log(`HLS: http://localhost:${config.http.port}/live/[stream-key]/index.m3u8`);
 console.log(`DASH: http://localhost:${config.http.port}/live/[stream-key]/index.mpd`);
 console.log(`MP4 Recording Storage: ${storageConfig.global.enabled ? 'Enabled' : 'Disabled'}`);
-console.log(`API: http://localhost:${config.http.port}/api`);
-console.log(`Recordings: http://localhost:${config.http.port}/recordings/[camera]`);

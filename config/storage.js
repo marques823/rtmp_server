@@ -13,6 +13,9 @@ const storageConfig = {
   
   // Configurações globais
   global: {
+    // Habilitar/desabilitar gravação globalmente
+    enabled: true,
+    
     // Tempo máximo de retenção para arquivos em dias (padrão)
     maxAgeDays: 7,
     
@@ -37,13 +40,13 @@ const storageConfig = {
   // Configurações específicas por câmera
   cameras: {
     // Exemplo: camera1
-    // camera1: {
-    //   maxAgeDays: 30,          // Retenção específica para esta câmera
-    //   maxSpace: 5000,          // Espaço máximo em MB (5GB)
-    //   enabled: true,           // Se a gravação está habilitada
-    //   rotationStrategy: 'oldest',
-    //   filenameFormat: 'cam1_{timestamp}.mp4'
-    // }
+    "camera1": {
+      maxAgeDays: 7,            // Retenção específica para esta câmera
+      maxSpace: 5000,           // Espaço máximo em MB (5GB)
+      enabled: true,            // Se a gravação está habilitada
+      autoRecord: true,         // Gravar automaticamente quando o stream iniciar
+      rotationStrategy: 'oldest'
+    }
   }
 };
 

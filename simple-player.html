@@ -26,7 +26,7 @@
 
         function playHLS() {
             const video = document.getElementById('video');
-            video.src = 'http://localhost:8090/live/test/index.m3u8';
+            video.src = 'http://localhost:8095/live/test/index.m3u8';
             video.play().catch(e => {
                 console.error('HLS playback failed:', e);
             });

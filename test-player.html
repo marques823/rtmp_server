@@ -43,7 +43,7 @@
             
             // Tentar o HLS primeiro (mais compatível)
             player.src({
-                src: `http://${serverHost}:8090/live/${streamKey}/index.m3u8`,
+                src: `http://${serverHost}:8095/live/${streamKey}/index.m3u8`,
                 type: 'application/x-mpegURL'
             });
             
@@ -51,7 +51,7 @@
             player.on('error', function() {
                 console.log('HLS falhou, tentando FLV...');
                 player.src({
-                    src: `http://${serverHost}:8090/live/${streamKey}.flv`,
+                    src: `http://${serverHost}:8095/live/${streamKey}.flv`,
                     type: 'video/x-flv'
                 });
                 player.play();

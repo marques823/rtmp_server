@@ -38,8 +38,11 @@ const auth = (req, res, next) => {
   next();
 };
 
+// Exportar middleware de autenticação para outras rotas
+const authMiddleware = { isAuthenticated: auth };
+
 // Exportar função para configurar a API no servidor HTTP
-module.exports = function(app, httpServer) {
+module.exports = function(app) {
   // Configurar middleware
   app.use('/api', bodyParser.json());
   app.use('/api', cors());
@@ -74,8 +77,8 @@ module.exports = function(app, httpServer) {
     });
   });
   
-  // Middleware para autenticação nas rotas da API
-  app.use('/api/middlewares/auth', { isAuthenticated: auth });
+  // Exportar middleware de autenticação
+  app.set('authMiddleware', authMiddleware);
   
   console.log('API initialized on /api');
   return app;

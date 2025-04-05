@@ -9,7 +9,7 @@ module.exports = {
     ping_timeout: 60
   },
   http: {
-    port: 8090,
+    port: 8095,
     allow_origin: '*',
     mediaroot: path.join(__dirname, '..'),
     api: true

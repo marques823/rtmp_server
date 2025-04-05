@@ -293,6 +293,9 @@
         throw new Error('Not authenticated');
       }
       
+      // Adicionar o endereço base com a porta correta
+      const apiUrl = url.startsWith('http') ? url : `http://${window.location.hostname}:8096${url}`;
+      
       const headers = {
         'Authorization': `Basic ${btoa(credentials.username + ':' + credentials.password)}`,
         'Content-Type': 'application/json',
@@ -300,7 +303,7 @@
       };
       
       try {
-        const response = await fetch(url, {
+        const response = await fetch(apiUrl, {
           ...options,
           headers
         });
@@ -412,6 +415,19 @@
       }
     }
     
+    /**
+     * Lista as gravações disponíveis para um stream
+     * @param {string} streamName - Nome do stream
+     * @returns {Array} - Lista de gravações
+     */
+    function fixRecordingUrl(recording) {
+      // Corrigir a URL para usar a porta 8096
+      if (recording.url.startsWith('/')) {
+        recording.url = `http://${window.location.hostname}:8096${recording.url}`;
+      }
+      return recording;
+    }
+    
     // Função para carregar gravações de uma câmera
     async function loadRecordings(camera) {
       try {
@@ -431,6 +447,9 @@
           
           if (data.recordings.length > 0) {
             data.recordings.forEach(recording => {
+              // Corrigir a URL para usar a porta 8096
+              recording = fixRecordingUrl(recording);
+              
               const date = new Date(recording.created);
               const formattedDate = date.toLocaleString();
               const sizeMB = (recording.size / (1024 * 1024)).toFixed(2);
