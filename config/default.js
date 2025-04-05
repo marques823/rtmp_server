@@ -10,7 +10,9 @@ module.exports = {
   },
   http: {
     port: 8090,
-    allow_origin: '*'
+    allow_origin: '*',
+    mediaroot: path.join(__dirname, '..'),
+    api: true
   },
   relay: {
     ffmpeg: '/usr/bin/ffmpeg',

@@ -18,13 +18,22 @@ if (!fs.existsSync(mediaDir)) {
 // Extract RTMP server configuration
 const rtmpConfig = {
   rtmp: config.rtmp,
-  http: config.http,
+  http: {
+    ...config.http,
+    api: true,
+    api_user: config.auth.api_user,
+    api_pass: config.auth.api_pass
+  },
   relay: config.relay,
   trans: config.trans,
   auth: config.auth,
   logType: config.logs.logType,
   logPath: config.logs.logPath
 };
+
+// Print config for debugging
+console.log('RTMP Server Configuration:');
+console.log(JSON.stringify(rtmpConfig, null, 2));
 
 // Create and start the server
 const nms = new NodeMediaServer(rtmpConfig);
