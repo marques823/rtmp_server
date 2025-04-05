@@ -11,7 +11,7 @@ fi
 
 STREAM_KEY=$1
 DESTINO=$2
-ORIGEM="rtmp://localhost:1935/live/$STREAM_KEY"
+ORIGEM="rtmp://localhost:1936/live/$STREAM_KEY"
 
 echo "Iniciando relay de $ORIGEM para $DESTINO"
 

@@ -105,7 +105,7 @@
         
         function loadHLS() {
             var streamKey = getStreamKey();
-            var hlsUrl = 'http://' + window.location.hostname + ':8000/live/' + streamKey + '/index.m3u8';
+            var hlsUrl = 'http://' + window.location.hostname + ':8090/live/' + streamKey + '/index.m3u8';
             
             player.src({
                 src: hlsUrl,
@@ -117,7 +117,7 @@
         
         function loadRTMP() {
             var streamKey = getStreamKey();
-            var rtmpUrl = 'rtmp://' + window.location.hostname + ':1935/live/' + streamKey;
+            var rtmpUrl = 'rtmp://' + window.location.hostname + ':1936/live/' + streamKey;
             
             player.src({
                 src: rtmpUrl,
@@ -129,7 +129,7 @@
         
         function loadFlv() {
             var streamKey = getStreamKey();
-            var flvUrl = 'http://' + window.location.hostname + ':8000/live/' + streamKey + '.flv';
+            var flvUrl = 'http://' + window.location.hostname + ':8090/live/' + streamKey + '.flv';
             
             player.src({
                 src: flvUrl,

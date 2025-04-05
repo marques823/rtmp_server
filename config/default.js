@@ -2,14 +2,14 @@ const path = require('path');
 
 module.exports = {
   rtmp: {
-    port: 1935,
+    port: 1936,
     chunk_size: 60000,
     gop_cache: true,
     ping: 30,
     ping_timeout: 60
   },
   http: {
-    port: 8000,
+    port: 8090,
     allow_origin: '*'
   },
   relay: {
