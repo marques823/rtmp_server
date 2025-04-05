@@ -1,0 +1,27 @@
+{
+  "name": "rtmp-server-core",
+  "version": "1.0.0",
+  "description": "Servidor RTMP simplificado para integração com ZoneMinder",
+  "main": "rtmp-core.js",
+  "scripts": {
+    "start": "node rtmp-core.js",
+    "docker:build": "docker build -t rtmp-server .",
+    "docker:run": "docker run -d --name rtmp-server -p 1936:1936 -p 8090:8090 rtmp-server",
+    "docker:stop": "docker stop rtmp-server && docker rm rtmp-server",
+    "docker:logs": "docker logs -f rtmp-server",
+    "docker:compose:up": "docker-compose up -d",
+    "docker:compose:down": "docker-compose down",
+    "docker:compose:logs": "docker-compose logs -f"
+  },
+  "keywords": [
+    "rtmp",
+    "streaming",
+    "zoneminder",
+    "cctv"
+  ],
+  "author": "Tiago",
+  "license": "ISC",
+  "dependencies": {
+    "node-media-server": "^2.5.0"
+  }
+} 

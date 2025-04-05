@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+  rtmp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: rtmp-server
+    restart: unless-stopped
+    ports:
+      - "1936:1936"  # RTMP
+      - "8090:8090"  # HTTP (HLS, DASH, FLV)
+    volumes:
+      - ./media:/app/media
+      - ./logs:/app/logs
+    environment:
+      - RTMP_PORT=1936
+      - HTTP_PORT=8090
+      - FFMPEG_PATH=/usr/bin/ffmpeg
+      - LOG_TYPE=3  # 0-none, 1-error, 2-warn, 3-info, 4-debug
+      - TZ=America/Sao_Paulo
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8090/api/server"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 10s 
