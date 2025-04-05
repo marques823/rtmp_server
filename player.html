@@ -106,7 +106,7 @@
         
         function loadHLS() {
             var streamKey = getStreamKey();
-            var hlsUrl = 'http://' + window.location.hostname + ':8090/live/' + streamKey + '/index.m3u8';
+            var hlsUrl = 'http://' + window.location.hostname + ':8095/live/' + streamKey + '/index.m3u8';
             
             player.src({
                 src: hlsUrl,
@@ -119,7 +119,7 @@
         function loadRTMP() {
             var streamKey = getStreamKey();
             // RTMP não é mais suportado em navegadores modernos, usar HTTP-FLV como alternativa
-            var flvUrl = 'http://' + window.location.hostname + ':8090/live/' + streamKey + '.flv';
+            var flvUrl = 'http://' + window.location.hostname + ':8095/live/' + streamKey + '.flv';
             
             player.src({
                 src: flvUrl,
@@ -131,7 +131,7 @@
         
         function loadFlv() {
             var streamKey = getStreamKey();
-            var flvUrl = 'http://' + window.location.hostname + ':8090/live/' + streamKey + '.flv';
+            var flvUrl = 'http://' + window.location.hostname + ':8095/live/' + streamKey + '.flv';
             
             player.src({
                 src: flvUrl,
