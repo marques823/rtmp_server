@@ -76,7 +76,7 @@ Substitua `[stream-key]` por um identificador único para cada câmera (ex: came
 Acesse a interface web para visualizar os players disponíveis:
 
 ```
-http://seu-servidor:9000/
+http://seu-servidor:9001/
 ```
 
 Opções de visualização:
@@ -85,8 +85,8 @@ Opções de visualização:
 
 Você também pode acessar os players diretamente:
 ```
-http://seu-servidor:9000/player.html      # Player básico
-http://seu-servidor:9000/multi-player.html # Player multi-câmera
+http://seu-servidor:9001/player.html      # Player básico
+http://seu-servidor:9001/multi-player.html # Player multi-câmera
 ```
 
 ### Relay de streams para outro servidor:

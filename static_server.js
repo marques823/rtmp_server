@@ -2,7 +2,7 @@ const express = require('express');
 const path = require('path');
 const fs = require('fs');
 const app = express();
-const port = 9000;
+const port = 9001;
 
 const rootDir = path.join(__dirname);
 console.log(`Diretório raiz: ${rootDir}`);
