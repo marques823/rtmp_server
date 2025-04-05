@@ -40,6 +40,18 @@ app.get('/player.html', (req, res) => {
   }
 });
 
+// Rota específica para multi-player.html
+app.get('/multi-player.html', (req, res) => {
+  const multiPlayerPath = path.join(rootDir, 'multi-player.html');
+  console.log(`Tentando servir: ${multiPlayerPath}`);
+  
+  if (fs.existsSync(multiPlayerPath)) {
+    res.sendFile(multiPlayerPath);
+  } else {
+    res.status(404).send('Multi-Camera Player não encontrado');
+  }
+});
+
 // Rota de fallback
 app.use((req, res) => {
   res.status(404).send('Arquivo não encontrado');
@@ -49,4 +61,5 @@ app.use((req, res) => {
 app.listen(port, '0.0.0.0', () => {
   console.log(`Servidor estático rodando em http://0.0.0.0:${port}`);
   console.log(`Acesse o player em http://seu-ip:${port}/player.html`);
+  console.log(`Acesse o multi-player em http://seu-ip:${port}/multi-player.html`);
 }); 

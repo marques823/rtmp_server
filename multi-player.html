@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CFTV Multi-Camera Viewer</title>
+    <link href="https://vjs.zencdn.net/7.20.3/video-js.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --accent-color: #3498db;
+            --text-color: #ecf0f1;
+            --danger-color: #e74c3c;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #1e272e;
+            color: var(--text-color);
+        }
+        
+        .header {
+            background-color: var(--primary-color);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo i {
+            font-size: 24px;
+            margin-right: 10px;
+            color: var(--accent-color);
+        }
+        
+        .logo h1 {
+            font-size: 20px;
+            margin: 0;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .main-container {
+            padding: 20px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        
+        .panel {
+            background-color: var(--secondary-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .panel-title {
+            font-size: 18px;
+            margin-top: 0;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .panel-title i {
+            margin-right: 10px;
+            color: var(--accent-color);
+        }
+        
+        .camera-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-gap: 20px;
+        }
+        
+        @media (min-width: 1200px) {
+            .camera-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .camera-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .camera-card {
+            background-color: var(--primary-color);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .camera-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .camera-header {
+            padding: 12px 15px;
+            background-color: rgba(0, 0, 0, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .camera-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin: 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        .camera-title i {
+            margin-right: 8px;
+            color: var(--accent-color);
+        }
+        
+        .camera-status {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+        }
+        
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+        
+        .status-live {
+            background-color: var(--success-color);
+        }
+        
+        .status-offline {
+            background-color: var(--danger-color);
+        }
+        
+        .video-container {
+            position: relative;
+            background-color: #000;
+        }
+        
+        .camera-footer {
+            padding: 12px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+        
+        .camera-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn {
+            background-color: transparent;
+            border: none;
+            color: var(--text-color);
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            transition: background-color 0.3s;
+        }
+        
+        .btn i {
+            margin-right: 5px;
+        }
+        
+        .btn:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .btn-primary {
+            background-color: var(--accent-color);
+        }
+        
+        .btn-primary:hover {
+            background-color: #2980b9;
+        }
+        
+        .btn-danger {
+            background-color: var(--danger-color);
+        }
+        
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+        
+        .btn-success {
+            background-color: var(--success-color);
+        }
+        
+        .btn-success:hover {
+            background-color: #27ae60;
+        }
+        
+        .add-camera-form {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .form-input {
+            flex: 1;
+            padding: 10px 15px;
+            border-radius: 4px;
+            border: 1px solid #455a64;
+            background-color: rgba(0, 0, 0, 0.2);
+            color: var(--text-color);
+            font-size: 14px;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+        
+        .stream-format-selector {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+        
+        .stream-format-option {
+            background-color: rgba(0, 0, 0, 0.2);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .stream-format-option:hover {
+            background-color: rgba(0, 0, 0, 0.3);
+        }
+        
+        .stream-format-option.active {
+            background-color: var(--accent-color);
+        }
+        
+        .fullscreen-view {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+        }
+        
+        .fullscreen-header {
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .fullscreen-title {
+            font-size: 18px;
+            margin: 0;
+        }
+        
+        .fullscreen-content {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .fullscreen-video {
+            max-width: 100%;
+            max-height: 100%;
+        }
+        
+        .video-js {
+            width: 100%;
+        }
+        
+        .vjs-tech {
+            pointer-events: none;
+        }
+        
+        .vjs-big-play-button {
+            display: none !important;
+        }
+        
+        /* Configuração para responsividade do player */
+        .video-container .video-js {
+            width: 100%;
+            height: 0;
+            padding-top: 56.25%; /* 16:9 Aspect Ratio */
+        }
+        
+        /* Ocultar controles em visualização multipla */
+        .multi-view .vjs-control-bar {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">
+            <i class="fas fa-video"></i>
+            <h1>CFTV Multi-Camera Viewer</h1>
+        </div>
+        <div class="controls">
+            <button class="btn btn-primary" id="layoutToggle">
+                <i class="fas fa-th-large"></i> Alterar Layout
+            </button>
+            <button class="btn btn-success" id="refreshAll">
+                <i class="fas fa-sync"></i> Atualizar Todas
+            </button>
+        </div>
+    </header>
+    
+    <div class="main-container">
+        <div class="panel">
+            <h2 class="panel-title"><i class="fas fa-plus-circle"></i> Adicionar Câmera</h2>
+            <div class="add-camera-form">
+                <input type="text" id="camera-name" class="form-input" placeholder="Nome da câmera (Ex: Entrada Principal)">
+                <input type="text" id="stream-key" class="form-input" placeholder="Stream key (Ex: camera1)">
+                <button class="btn btn-primary" id="add-camera">
+                    <i class="fas fa-plus"></i> Adicionar
+                </button>
+            </div>
+            
+            <div class="stream-format-selector">
+                <div class="stream-format-option active" data-format="hls">HLS</div>
+                <div class="stream-format-option" data-format="flv">HTTP-FLV</div>
+                <div class="stream-format-option" data-format="rtmp">RTMP</div>
+            </div>
+        </div>
+        
+        <div class="panel">
+            <h2 class="panel-title"><i class="fas fa-video"></i> Câmeras</h2>
+            <div class="camera-grid" id="camera-grid">
+                <!-- As câmeras serão adicionadas aqui dinamicamente -->
+            </div>
+        </div>
+    </div>
+    
+    <div class="fullscreen-view" id="fullscreen-view">
+        <div class="fullscreen-header">
+            <h3 class="fullscreen-title" id="fullscreen-title">Câmera em Tela Cheia</h3>
+            <button class="btn btn-danger" id="exit-fullscreen">
+                <i class="fas fa-times"></i> Fechar
+            </button>
+        </div>
+        <div class="fullscreen-content">
+            <div class="video-container fullscreen-video">
+                <video
+                    id="fullscreen-player"
+                    class="video-js vjs-default-skin"
+                    controls
+                    preload="auto"
+                    width="100%"
+                    height="100%"
+                    data-setup='{}'
+                >
+                </video>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://vjs.zencdn.net/7.20.3/video.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/videojs-flash@2/dist/videojs-flash.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flv.js@1.6.2/dist/flv.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/videojs-flvjs@0.2.0/dist/videojs-flvjs.min.js"></script>
+    <script>
+        // Configurações
+        const config = {
+            serverHost: window.location.hostname,
+            rtmpPort: 1936,
+            httpPort: 8090,
+            defaultFormat: 'hls'
+        };
+        
+        // Estado da aplicação
+        let state = {
+            cameras: [],
+            selectedFormat: config.defaultFormat,
+            layoutColumns: 2
+        };
+        
+        // Carregar câmeras salvas no localStorage
+        function loadSavedCameras() {
+            const savedCameras = localStorage.getItem('cftv-cameras');
+            if (savedCameras) {
+                state.cameras = JSON.parse(savedCameras);
+                renderCameraGrid();
+            }
+        }
+        
+        // Salvar câmeras no localStorage
+        function saveCameras() {
+            localStorage.setItem('cftv-cameras', JSON.stringify(state.cameras));
+        }
+        
+        // Gerar ID único para câmera
+        function generateId() {
+            return 'cam_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
+        }
+        
+        // Adicionar nova câmera
+        function addCamera(name, streamKey) {
+            const camera = {
+                id: generateId(),
+                name: name,
+                streamKey: streamKey,
+                status: 'offline'
+            };
+            
+            state.cameras.push(camera);
+            saveCameras();
+            renderCameraGrid();
+        }
+        
+        // Remover câmera
+        function removeCamera(cameraId) {
+            state.cameras = state.cameras.filter(camera => camera.id !== cameraId);
+            saveCameras();
+            renderCameraGrid();
+        }
+        
+        // Obter URL do stream baseado no formato selecionado
+        function getStreamUrl(streamKey, format) {
+            switch (format) {
+                case 'hls':
+                    return `http://${config.serverHost}:${config.httpPort}/live/${streamKey}/index.m3u8`;
+                case 'flv':
+                    return `http://${config.serverHost}:${config.httpPort}/live/${streamKey}.flv`;
+                case 'rtmp':
+                    return `rtmp://${config.serverHost}:${config.rtmpPort}/live/${streamKey}`;
+                default:
+                    return `http://${config.serverHost}:${config.httpPort}/live/${streamKey}/index.m3u8`;
+            }
+        }
+        
+        // Obter tipo de mídia baseado no formato
+        function getStreamType(format) {
+            switch (format) {
+                case 'hls':
+                    return 'application/x-mpegURL';
+                case 'flv':
+                    return 'video/x-flv';
+                case 'rtmp':
+                    return 'rtmp/flv';
+                default:
+                    return 'application/x-mpegURL';
+            }
+        }
+        
+        // Inicializar player para uma câmera
+        function initializePlayer(cameraId, streamKey) {
+            const playerId = `player-${cameraId}`;
+            const streamUrl = getStreamUrl(streamKey, state.selectedFormat);
+            const streamType = getStreamType(state.selectedFormat);
+            
+            if (window.players && window.players[cameraId]) {
+                window.players[cameraId].dispose();
+            }
+            
+            const player = videojs(playerId, {
+                autoplay: true,
+                muted: true,
+                controls: true,
+                fluid: true,
+                liveui: true,
+                liveTracker: {
+                    trackingThreshold: 0,
+                    liveTolerance: 15
+                }
+            });
+            
+            player.src({
+                src: streamUrl,
+                type: streamType
+            });
+            
+            player.on('error', function() {
+                updateCameraStatus(cameraId, 'offline');
+            });
+            
+            player.on('playing', function() {
+                updateCameraStatus(cameraId, 'live');
+            });
+            
+            if (!window.players) window.players = {};
+            window.players[cameraId] = player;
+            
+            return player;
+        }
+        
+        // Atualizar status da câmera
+        function updateCameraStatus(cameraId, status) {
+            const cameraIndex = state.cameras.findIndex(camera => camera.id === cameraId);
+            if (cameraIndex !== -1) {
+                state.cameras[cameraIndex].status = status;
+                
+                // Atualizar indicador de status na UI
+                const statusIndicator = document.querySelector(`#status-${cameraId}`);
+                if (statusIndicator) {
+                    statusIndicator.className = `status-indicator status-${status}`;
+                }
+                
+                const statusText = document.querySelector(`#status-text-${cameraId}`);
+                if (statusText) {
+                    statusText.textContent = status === 'live' ? 'Online' : 'Offline';
+                }
+            }
+        }
+        
+        // Abrir câmera em tela cheia
+        function openFullscreen(cameraId, name, streamKey) {
+            const fullscreenView = document.getElementById('fullscreen-view');
+            const fullscreenTitle = document.getElementById('fullscreen-title');
+            
+            fullscreenTitle.textContent = name;
+            fullscreenView.style.display = 'flex';
+            
+            const player = videojs('fullscreen-player', {
+                autoplay: true,
+                controls: true,
+                fluid: true,
+                liveui: true
+            });
+            
+            const streamUrl = getStreamUrl(streamKey, state.selectedFormat);
+            const streamType = getStreamType(state.selectedFormat);
+            
+            player.src({
+                src: streamUrl,
+                type: streamType
+            });
+            
+            player.play();
+            
+            // Armazenar referência para limpeza posterior
+            window.fullscreenPlayer = player;
+        }
+        
+        // Fechar tela cheia
+        function closeFullscreen() {
+            const fullscreenView = document.getElementById('fullscreen-view');
+            fullscreenView.style.display = 'none';
+            
+            if (window.fullscreenPlayer) {
+                window.fullscreenPlayer.dispose();
+                window.fullscreenPlayer = null;
+            }
+        }
+        
+        // Alternar entre formatos de stream
+        function switchStreamFormat(format) {
+            state.selectedFormat = format;
+            
+            // Atualizar UI
+            document.querySelectorAll('.stream-format-option').forEach(el => {
+                el.classList.toggle('active', el.dataset.format === format);
+            });
+            
+            // Recarregar todos os players
+            refreshAllCameras();
+        }
+        
+        // Atualizar todas as câmeras
+        function refreshAllCameras() {
+            state.cameras.forEach(camera => {
+                if (window.players && window.players[camera.id]) {
+                    const player = window.players[camera.id];
+                    const streamUrl = getStreamUrl(camera.streamKey, state.selectedFormat);
+                    const streamType = getStreamType(state.selectedFormat);
+                    
+                    player.src({
+                        src: streamUrl,
+                        type: streamType
+                    });
+                    
+                    player.play();
+                }
+            });
+        }
+        
+        // Alternar layout da grade
+        function toggleGridLayout() {
+            const grid = document.getElementById('camera-grid');
+            state.layoutColumns = state.layoutColumns === 2 ? 3 : 2;
+            
+            grid.style.gridTemplateColumns = `repeat(${state.layoutColumns}, 1fr)`;
+        }
+        
+        // Renderizar grid de câmeras
+        function renderCameraGrid() {
+            const grid = document.getElementById('camera-grid');
+            grid.innerHTML = '';
+            
+            if (state.cameras.length === 0) {
+                grid.innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 40px;">
+                        <i class="fas fa-video-slash" style="font-size: 48px; color: #95a5a6; display: block; margin-bottom: 20px;"></i>
+                        <p style="color: #95a5a6; font-size: 18px;">Nenhuma câmera adicionada.</p>
+                        <p style="color: #95a5a6;">Use o formulário acima para adicionar câmeras.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            state.cameras.forEach(camera => {
+                const card = document.createElement('div');
+                card.className = 'camera-card';
+                card.innerHTML = `
+                    <div class="camera-header">
+                        <h3 class="camera-title">
+                            <i class="fas fa-video"></i>
+                            ${camera.name}
+                        </h3>
+                        <div class="camera-status">
+                            <div class="status-indicator status-${camera.status}" id="status-${camera.id}"></div>
+                            <span id="status-text-${camera.id}">${camera.status === 'live' ? 'Online' : 'Offline'}</span>
+                        </div>
+                    </div>
+                    <div class="video-container">
+                        <video
+                            id="player-${camera.id}"
+                            class="video-js vjs-default-skin multi-view"
+                            controls
+                            preload="auto"
+                            width="100%"
+                            height="0"
+                            data-setup='{}'
+                        >
+                        </video>
+                    </div>
+                    <div class="camera-footer">
+                        <div class="camera-actions">
+                            <button class="btn" onclick="openFullscreen('${camera.id}', '${camera.name}', '${camera.streamKey}')">
+                                <i class="fas fa-expand"></i> Tela Cheia
+                            </button>
+                            <button class="btn" onclick="refreshCamera('${camera.id}', '${camera.streamKey}')">
+                                <i class="fas fa-sync"></i> Atualizar
+                            </button>
+                        </div>
+                        <button class="btn btn-danger" onclick="removeCamera('${camera.id}')">
+                            <i class="fas fa-trash"></i> Remover
+                        </button>
+                    </div>
+                `;
+                
+                grid.appendChild(card);
+                
+                // Inicializar player após adicionar ao DOM
+                setTimeout(() => {
+                    initializePlayer(camera.id, camera.streamKey);
+                }, 100);
+            });
+        }
+        
+        // Atualizar uma câmera específica
+        function refreshCamera(cameraId, streamKey) {
+            if (window.players && window.players[cameraId]) {
+                const player = window.players[cameraId];
+                const streamUrl = getStreamUrl(streamKey, state.selectedFormat);
+                const streamType = getStreamType(state.selectedFormat);
+                
+                player.src({
+                    src: streamUrl,
+                    type: streamType
+                });
+                
+                player.play();
+            }
+        }
+        
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            // Carregar câmeras salvas
+            loadSavedCameras();
+            
+            // Configurar listeners de eventos
+            document.getElementById('add-camera').addEventListener('click', function() {
+                const nameInput = document.getElementById('camera-name');
+                const streamKeyInput = document.getElementById('stream-key');
+                
+                const name = nameInput.value.trim();
+                const streamKey = streamKeyInput.value.trim();
+                
+                if (name && streamKey) {
+                    addCamera(name, streamKey);
+                    nameInput.value = '';
+                    streamKeyInput.value = '';
+                } else {
+                    alert('Por favor, preencha o nome e a stream key da câmera.');
+                }
+            });
+            
+            document.getElementById('exit-fullscreen').addEventListener('click', closeFullscreen);
+            
+            document.getElementById('refreshAll').addEventListener('click', refreshAllCameras);
+            
+            document.getElementById('layoutToggle').addEventListener('click', toggleGridLayout);
+            
+            // Configurar seletores de formato
+            document.querySelectorAll('.stream-format-option').forEach(el => {
+                el.addEventListener('click', function() {
+                    switchStreamFormat(this.dataset.format);
+                });
+            });
+        });
+        
+        // Expor funções para uso global
+        window.addCamera = addCamera;
+        window.removeCamera = removeCamera;
+        window.openFullscreen = openFullscreen;
+        window.closeFullscreen = closeFullscreen;
+        window.refreshCamera = refreshCamera;
+        window.refreshAllCameras = refreshAllCameras;
+    </script>
+</body>
+</html>
