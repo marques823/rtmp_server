@@ -1,29 +1,27 @@
 {
-  "name": "rtmp-server",
+  "name": "rtmp-server-core",
   "version": "1.0.0",
-  "description": "Servidor RTMP para Gravação de CFTV",
-  "main": "app.js",
+  "description": "Servidor RTMP simplificado para integração com ZoneMinder",
+  "main": "rtmp-core.js",
   "scripts": {
-    "start": "node app.js",
-    "dev": "nodemon app.js",
-    "cleanup": "node cleanup.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node rtmp-core.js",
+    "docker:build": "docker build -t rtmp-server .",
+    "docker:run": "docker run -d --name rtmp-server -p 1936:1936 -p 8090:8090 rtmp-server",
+    "docker:stop": "docker stop rtmp-server && docker rm rtmp-server",
+    "docker:logs": "docker logs -f rtmp-server",
+    "docker:compose:up": "docker-compose up -d",
+    "docker:compose:down": "docker-compose down",
+    "docker:compose:logs": "docker-compose logs -f"
   },
   "keywords": [
     "rtmp",
-    "cftv",
     "streaming",
-    "video"
+    "zoneminder",
+    "cctv"
   ],
-  "author": "",
+  "author": "Tiago",
   "license": "ISC",
   "dependencies": {
-    "body-parser": "^2.2.0",
-    "cors": "^2.8.5",
-    "express": "^5.1.0",
-    "node-media-server": "^4.0.12"
-  },
-  "devDependencies": {
-    "nodemon": "^3.0.1"
+    "node-media-server": "^2.5.0"
   }
-}
+} 
