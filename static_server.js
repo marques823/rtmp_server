@@ -52,6 +52,18 @@ app.get('/multi-player.html', (req, res) => {
   }
 });
 
+// Rota específica para test-player.html
+app.get('/test-player.html', (req, res) => {
+  const testPlayerPath = path.join(rootDir, 'test-player.html');
+  console.log(`Tentando servir: ${testPlayerPath}`);
+  
+  if (fs.existsSync(testPlayerPath)) {
+    res.sendFile(testPlayerPath);
+  } else {
+    res.status(404).send('Test Player não encontrado');
+  }
+});
+
 // Rota de fallback
 app.use((req, res) => {
   res.status(404).send('Arquivo não encontrado');
