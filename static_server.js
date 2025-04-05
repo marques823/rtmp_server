@@ -76,6 +76,18 @@ app.get('/simple-player.html', (req, res) => {
   }
 });
 
+// Rota específica para player-recordings.html
+app.get('/player-recordings.html', (req, res) => {
+  const recordingsPlayerPath = path.join(rootDir, 'player-recordings.html');
+  console.log(`Tentando servir: ${recordingsPlayerPath}`);
+  
+  if (fs.existsSync(recordingsPlayerPath)) {
+    res.sendFile(recordingsPlayerPath);
+  } else {
+    res.status(404).send('Gerenciador de Gravações não encontrado');
+  }
+});
+
 // Rota de fallback
 app.use((req, res) => {
   res.status(404).send('Arquivo não encontrado');
@@ -86,4 +98,5 @@ app.listen(port, '0.0.0.0', () => {
   console.log(`Servidor estático rodando em http://0.0.0.0:${port}`);
   console.log(`Acesse o player em http://seu-ip:${port}/player.html`);
   console.log(`Acesse o multi-player em http://seu-ip:${port}/multi-player.html`);
+  console.log(`Acesse o gerenciador de gravações em http://seu-ip:${port}/player-recordings.html`);
 }); 
