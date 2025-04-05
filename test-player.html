@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Player de Teste</title>
+    <link href="https://vjs.zencdn.net/7.20.3/video-js.css" rel="stylesheet" />
+</head>
+<body>
+    <h1>Player de Teste - Pattern Test</h1>
+    <div style="max-width: 800px; margin: 0 auto;">
+        <video
+            id="player"
+            class="video-js vjs-default-skin"
+            controls
+            preload="auto"
+            width="100%"
+            height="400"
+            data-setup='{}'
+        >
+        </video>
+    </div>
+
+    <script src="https://vjs.zencdn.net/7.20.3/video.min.js"></script>
+    <!-- Remover o plugin Flash obsoleto -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/videojs-flash@2/dist/videojs-flash.min.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/flv.js@1.6.2/dist/flv.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/videojs-flvjs@0.2.0/dist/videojs-flvjs.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Verificar suporte a flv.js
+            if (flvjs.isSupported()) {
+                console.log('flv.js é suportado!');
+            } else {
+                console.error('flv.js não é suportado neste navegador');
+                alert('Seu navegador não suporta a reprodução de streams FLV. Por favor, use um navegador moderno como Chrome, Firefox ou Edge.');
+                return;
+            }
+
+            const player = videojs('player');
+            const streamKey = 'test';
+            const serverHost = 'localhost';
+            
+            // Tentar o HLS primeiro (mais compatível)
+            player.src({
+                src: `http://${serverHost}:8090/live/${streamKey}/index.m3u8`,
+                type: 'application/x-mpegURL'
+            });
+            
+            // Backup: Se HLS não funcionar, tentar FLV
+            player.on('error', function() {
+                console.log('HLS falhou, tentando FLV...');
+                player.src({
+                    src: `http://${serverHost}:8090/live/${streamKey}.flv`,
+                    type: 'video/x-flv'
+                });
+                player.play();
+            });
+            
+            player.play();
+        });
+    </script>
+</body>
+</html> 
