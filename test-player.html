@@ -7,7 +7,7 @@
     <link href="https://vjs.zencdn.net/7.20.3/video-js.css" rel="stylesheet" />
 </head>
 <body>
-    <h1>Player de Teste - camera2</h1>
+    <h1>Player de Teste - Pattern Test</h1>
     <div style="max-width: 800px; margin: 0 auto;">
         <video
             id="player"
@@ -38,13 +38,23 @@
             }
 
             const player = videojs('player');
-            const streamKey = 'camera2';
-            const serverHost = window.location.hostname;
+            const streamKey = 'test';
+            const serverHost = 'localhost';
             
-            // Carregar via HTTP-FLV
+            // Tentar o HLS primeiro (mais compatível)
             player.src({
-                src: `http://${serverHost}:8090/live/${streamKey}.flv`,
-                type: 'video/x-flv'
+                src: `http://${serverHost}:8090/live/${streamKey}/index.m3u8`,
+                type: 'application/x-mpegURL'
+            });
+            
+            // Backup: Se HLS não funcionar, tentar FLV
+            player.on('error', function() {
+                console.log('HLS falhou, tentando FLV...');
+                player.src({
+                    src: `http://${serverHost}:8090/live/${streamKey}.flv`,
+                    type: 'video/x-flv'
+                });
+                player.play();
             });
             
             player.play();

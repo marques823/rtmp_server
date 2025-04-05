@@ -64,6 +64,18 @@ app.get('/test-player.html', (req, res) => {
   }
 });
 
+// Rota específica para simple-player.html
+app.get('/simple-player.html', (req, res) => {
+  const simplePlayerPath = path.join(rootDir, 'simple-player.html');
+  console.log(`Tentando servir: ${simplePlayerPath}`);
+  
+  if (fs.existsSync(simplePlayerPath)) {
+    res.sendFile(simplePlayerPath);
+  } else {
+    res.status(404).send('Simple Player não encontrado');
+  }
+});
+
 // Rota de fallback
 app.use((req, res) => {
   res.status(404).send('Arquivo não encontrado');

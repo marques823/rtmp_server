@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Player</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1 { color: #333; }
+        #controls { margin: 20px 0; }
+        video { max-width: 100%; border: 1px solid #ddd; }
+    </style>
+</head>
+<body>
+    <h1>Simple Video Player</h1>
+    <div id="controls">
+        <button onclick="playHLS()">Play HLS</button>
+        <button onclick="playFLV()">Play FLV</button>
+    </div>
+    <video id="video" controls autoplay></video>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            playHLS();
+        });
+
+        function playHLS() {
+            const video = document.getElementById('video');
+            video.src = 'http://localhost:8090/live/test/index.m3u8';
+            video.play().catch(e => {
+                console.error('HLS playback failed:', e);
+            });
+        }
+
+        function playFLV() {
+            alert('FLV requires specialized players. Please use the test-player.html instead.');
+        }
+    </script>
+</body>
+</html> 
