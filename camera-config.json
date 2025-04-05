@@ -1,0 +1,30 @@
+{
+  "camera1": {
+    "name": "Câmera Frontal",
+    "description": "Câmera de segurança na entrada principal",
+    "recordEnabled": true,
+    "maxAgeDays": 5,
+    "maxSpaceGB": 2
+  },
+  "camera2": {
+    "name": "Câmera Corredor",
+    "description": "Câmera de segurança no corredor principal",
+    "recordEnabled": true,
+    "maxAgeDays": 3,
+    "maxSpaceGB": 1.5
+  },
+  "camera3": {
+    "name": "Câmera Estacionamento",
+    "description": "Câmera de segurança no estacionamento",
+    "recordEnabled": false,
+    "maxAgeDays": 2,
+    "maxSpaceGB": 1
+  },
+  "test": {
+    "name": "Câmera de Teste",
+    "description": "Stream de teste para validação do sistema",
+    "recordEnabled": true,
+    "maxAgeDays": 1,
+    "maxSpaceGB": 0.5
+  }
+} 

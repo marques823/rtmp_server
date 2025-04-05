@@ -8,7 +8,9 @@ Um servidor RTMP simplificado para recebimento de streams de câmeras IP e integ
 - Conversão automática para HLS e DASH para visualização em navegadores
 - Suporte para Docker e Docker Compose
 - Compatível com ZoneMinder para monitoramento e análise
-- Sem interface web, gravação ou API (versão simplificada)
+- **Novo:** Armazenamento opcional em MP4 configurável por câmera
+- **Novo:** Gerenciamento automático de espaço em disco por câmera
+- Sem interface web ou API (versão simplificada)
 
 ## Requisitos
 
@@ -44,7 +46,13 @@ Para execução com Docker:
    sudo apt update && sudo apt install -y ffmpeg
    ```
 
-4. Inicie o servidor:
+4. Configure o armazenamento de câmeras (opcional):
+   ```bash
+   # Edite o arquivo de configuração de câmeras
+   nano camera-config.json
+   ```
+
+5. Inicie o servidor:
    ```bash
    ./start-rtmp.sh
    ```
@@ -57,7 +65,13 @@ Para execução com Docker:
    cd rtmp-server
    ```
 
-2. Construa e inicie o contêiner usando Docker Compose:
+2. Configure o armazenamento de câmeras (opcional):
+   ```bash
+   # Edite o arquivo de configuração de câmeras
+   nano camera-config.json
+   ```
+
+3. Construa e inicie o contêiner usando Docker Compose:
    ```bash
    docker-compose up -d
    ```
@@ -88,6 +102,52 @@ Os streams podem ser acessados nos seguintes formatos:
 - **HTTP-FLV**: `http://seu-servidor:8090/live/[stream-key].flv`
 - **HLS**: `http://seu-servidor:8090/live/[stream-key]/index.m3u8`
 - **DASH**: `http://seu-servidor:8090/live/[stream-key]/index.mpd`
+- **MP4**: Os arquivos MP4 são salvos em `media/live/[stream-key]/[timestamp].mp4`
+
+### Configuração de Armazenamento
+
+O sistema permite configurar o armazenamento de streams em arquivos MP4, com gerenciamento automático de espaço. A configuração pode ser feita através de variáveis de ambiente ou pelo arquivo `camera-config.json`.
+
+#### Configuração Global (Variáveis de Ambiente)
+
+```
+STORAGE_ENABLED=true         # Habilitar armazenamento
+ENABLE_MP4_RECORDING=true    # Habilitar gravação em MP4
+STORAGE_MAX_AGE_DAYS=7       # Máximo de dias para manter arquivos
+STORAGE_MAX_SPACE_GB=10      # Máximo de espaço em GB por câmera
+```
+
+#### Configuração por Câmera
+
+Crie ou edite o arquivo `camera-config.json` com o seguinte formato:
+
+```json
+{
+  "camera1": {
+    "name": "Câmera Frontal",
+    "description": "Câmera de segurança na entrada principal",
+    "recordEnabled": true,
+    "maxAgeDays": 5,
+    "maxSpaceGB": 2
+  },
+  "camera2": {
+    "name": "Câmera Corredor",
+    "description": "Câmera de segurança no corredor principal",
+    "recordEnabled": true,
+    "maxAgeDays": 3,
+    "maxSpaceGB": 1.5
+  }
+}
+```
+
+Cada câmera pode ter as seguintes configurações:
+- `name`: Nome da câmera (para referência)
+- `description`: Descrição da câmera (para referência)
+- `recordEnabled`: Habilitar gravação para esta câmera (true/false)
+- `maxAgeDays`: Máximo de dias para manter arquivos desta câmera
+- `maxSpaceGB`: Máximo de espaço em GB para arquivos desta câmera
+
+O sistema verificará automaticamente o espaço utilizado a cada hora e removerá arquivos antigos ou quando o espaço máximo for excedido.
 
 ### Integração com ZoneMinder
 
@@ -125,6 +185,10 @@ environment:
   - HTTP_PORT=8090
   - FFMPEG_PATH=/usr/bin/ffmpeg
   - LOG_TYPE=3
+  - STORAGE_ENABLED=true
+  - ENABLE_MP4_RECORDING=true
+  - STORAGE_MAX_AGE_DAYS=7
+  - STORAGE_MAX_SPACE_GB=10
 ```
 
 ### Log Levels
@@ -172,8 +236,7 @@ docker-compose down
 
 Esta versão simplificada não inclui:
 - Interface web para visualização de streams
-- Gerenciador de gravações
-- API para gerenciamento
+- API para gerenciamento avançado
 - Autenticação para publicação e visualização
 
 Essas funcionalidades estão disponíveis na versão completa do projeto.
