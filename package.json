@@ -5,8 +5,10 @@
   "main": "rtmp-core.js",
   "scripts": {
     "start": "node rtmp-core.js",
+    "start:rtsp": "node rtsp-server.js",
+    "start:all": "node server.js",
     "docker:build": "docker build -t rtmp-server .",
-    "docker:run": "docker run -d --name rtmp-server -p 1936:1936 -p 8090:8090 rtmp-server",
+    "docker:run": "docker run -d --name rtmp-server -p 1936:1936 -p 8090:8090 -p 8554:8554 rtmp-server",
     "docker:stop": "docker stop rtmp-server && docker rm rtmp-server",
     "docker:logs": "docker logs -f rtmp-server",
     "docker:compose:up": "docker-compose up -d",
@@ -17,11 +19,16 @@
     "rtmp",
     "streaming",
     "zoneminder",
-    "cctv"
+    "cctv",
+    "rtsp",
+    "intelbras"
   ],
   "author": "Tiago",
   "license": "ISC",
   "dependencies": {
-    "node-media-server": "^2.5.0"
+    "node-media-server": "^2.5.0",
+    "node-rtsp-server": "^0.2.0",
+    "ws": "^8.13.0",
+    "node-onvif": "^0.1.7"
   }
 } 

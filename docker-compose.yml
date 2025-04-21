@@ -10,12 +10,17 @@ services:
     ports:
       - "1936:1936"  # RTMP
       - "8090:8090"  # HTTP (HLS, DASH, FLV)
+      - "8554:8554"  # RTSP
+      - "8555:8555"  # RTSP RTCP
     volumes:
       - ./media:/app/media
       - ./logs:/app/logs
+      - ./intelbras-config.json:/app/intelbras-config.json
     environment:
       - RTMP_PORT=1936
       - HTTP_PORT=8090
+      - RTSP_PORT=8554
+      - RTSP_RTCP_PORT=8555
       - FFMPEG_PATH=/usr/bin/ffmpeg
       - LOG_TYPE=3  # 0-none, 1-error, 2-warn, 3-info, 4-debug
       - TZ=America/Sao_Paulo
@@ -23,6 +28,7 @@ services:
       - ENABLE_MP4_RECORDING=true
       - STORAGE_MAX_AGE_DAYS=7
       - STORAGE_MAX_SPACE_GB=10
+      - RTMP_TO_RTSP_ENABLED=true
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8090/api/server"]
       interval: 30s

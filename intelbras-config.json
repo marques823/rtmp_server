@@ -1,0 +1,47 @@
+{
+  "rtspServer": {
+    "port": 8554,
+    "rtcpPort": 8555
+  },
+  "rtmpToRtsp": {
+    "enabled": true,
+    "autoConvert": true,
+    "keepOriginal": true
+  },
+  "dvrSettings": {
+    "intelbras": {
+      "model": "NVD",
+      "streamFormat": "h264",
+      "streamProperties": {
+        "videoWidth": 1280,
+        "videoHeight": 720,
+        "videoFrameRate": 30,
+        "videoBitrate": "2M",
+        "audioChannels": 1,
+        "audioSampleRate": 44100
+      }
+    }
+  },
+  "streamSettings": {
+    "camera1": {
+      "name": "Câmera Frontal",
+      "enableRtsp": true,
+      "rtspPath": "/camera1",
+      "dvrIntegration": true,
+      "dvrIp": "192.168.1.100",
+      "dvrUsername": "admin",
+      "dvrPassword": "admin",
+      "dvrChannel": 1
+    },
+    "camera2": {
+      "name": "Câmera Fundos",
+      "enableRtsp": true,
+      "rtspPath": "/camera2",
+      "dvrIntegration": true,
+      "dvrIp": "192.168.1.100",
+      "dvrUsername": "admin",
+      "dvrPassword": "admin",
+      "dvrChannel": 2
+    }
+  }
+} 

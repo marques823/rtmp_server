@@ -13,15 +13,18 @@ WORKDIR /app
 # Copiar apenas arquivos necessários
 COPY package*.json ./
 COPY rtmp-core.js ./
+COPY rtsp-server.js ./
+COPY server.js ./
+COPY intelbras-config.json ./
 
 # Criar diretórios necessários
-RUN mkdir -p media logs
+RUN mkdir -p media/live media/rtsp logs
 
 # Instalar dependências
 RUN npm install
 
 # Expor portas
-EXPOSE 1936 8090
+EXPOSE 1936 8090 8554 8555
 
 # Comando para iniciar o servidor
-CMD ["node", "rtmp-core.js"] 
+CMD ["node", "server.js"] 
