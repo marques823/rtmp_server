@@ -1,30 +1,44 @@
 {
-  "camera1": {
-    "name": "Câmera Frontal",
-    "description": "Câmera de segurança na entrada principal",
+  "zoneminder": {
+    "name": "Entrada Principal",
+    "description": "Câmera de segurança: Entrada Principal",
     "recordEnabled": true,
     "maxAgeDays": 5,
     "maxSpaceGB": 2
-  },
-  "camera2": {
-    "name": "Câmera Corredor",
-    "description": "Câmera de segurança no corredor principal",
-    "recordEnabled": true,
-    "maxAgeDays": 3,
-    "maxSpaceGB": 1.5
-  },
-  "camera3": {
-    "name": "Câmera Estacionamento",
-    "description": "Câmera de segurança no estacionamento",
-    "recordEnabled": false,
-    "maxAgeDays": 2,
-    "maxSpaceGB": 1
-  },
-  "test": {
-    "name": "Câmera de Teste",
-    "description": "Stream de teste para validação do sistema",
-    "recordEnabled": true,
-    "maxAgeDays": 1,
-    "maxSpaceGB": 0.5
   }
-} 
+  "camera1": {
+    "name": "Sala de Estar",
+    "description": "Câmera de segurança: Sala de Estar",
+    "recordEnabled": true,
+    "maxAgeDays": 5,
+    "maxSpaceGB": 2
+  }
+  "camera2": {
+    "name": "Corredor",
+    "description": "Câmera de segurança: Corredor",
+    "recordEnabled": true,
+    "maxAgeDays": 5,
+    "maxSpaceGB": 2
+  }
+  "camera3": {
+    "name": "Estacionamento",
+    "description": "Câmera de segurança: Estacionamento",
+    "recordEnabled": true,
+    "maxAgeDays": 5,
+    "maxSpaceGB": 2
+  }
+  "camera4": {
+    "name": "Fundos",
+    "description": "Câmera de segurança: Fundos",
+    "recordEnabled": true,
+    "maxAgeDays": 5,
+    "maxSpaceGB": 2
+  }
+  "camera5": {
+    "name": "Garagem",
+    "description": "Câmera de segurança: Garagem",
+    "recordEnabled": true,
+    "maxAgeDays": 5,
+    "maxSpaceGB": 2
+  }
+}
