@@ -9,6 +9,7 @@ Este módulo adiciona suporte para integração do servidor RTMP com DVRs Intelb
 * Compatibilidade com DVRs Intelbras (testado com modelos NVD)
 * Configuração flexível por câmera
 * Scripts de teste para validação da integração
+* **Novo:** Suporte para autenticação RTSP exigida pelos DVRs Intelbras
 
 ## Como Funciona
 
@@ -18,8 +19,8 @@ O sistema opera da seguinte forma:
 2. O servidor RTMP recebe os streams e os processa (gravação MP4, HLS, etc.)
 3. O módulo RTSP detecta automaticamente novos streams RTMP
 4. Para cada stream RTMP, um processo FFmpeg é iniciado para fazer a conversão para RTSP
-5. Os streams RTSP ficam disponíveis na porta 8554
-6. O DVR Intelbras pode acessar os streams via protocolo RTSP
+5. Os streams RTSP ficam disponíveis na porta 8554 com autenticação
+6. O DVR Intelbras pode acessar os streams via protocolo RTSP usando as credenciais configuradas
 
 ## Requisitos
 
@@ -34,23 +35,72 @@ O sistema opera da seguinte forma:
 
 1. Clone este repositório
 2. Instale as dependências: `npm install`
-3. Inicie o servidor: `./start-intelbras-rtsp.sh`
+3. Configure as credenciais RTSP: `./config-rtsp-auth.sh`
+4. Inicie o servidor: `./start-intelbras-rtsp.sh`
 
 ### Opção 2: Usar Docker
 
 1. Clone este repositório
 2. Configure o arquivo `intelbras-config.json` conforme necessário
-3. Execute com Docker Compose: `docker-compose up -d`
+3. Ajuste as variáveis de ambiente no `docker-compose.yml` se necessário
+4. Execute com Docker Compose: `docker-compose up -d`
 
 ## Configuração
 
-A configuração é feita através do arquivo `intelbras-config.json`. Exemplo:
+### Configuração de Autenticação RTSP
+
+O servidor suporta autenticação para os streams RTSP, o que é geralmente exigido pelos DVRs Intelbras. Você pode configurar as credenciais de duas maneiras:
+
+#### Método 1: Usando o script de configuração
+
+Execute o script de configuração interativo:
+```
+./config-rtsp-auth.sh
+```
+
+Este script irá perguntar se você deseja habilitar a autenticação e quais credenciais usar, salvando-as de forma segura.
+
+#### Método 2: Configurando no arquivo intelbras-config.json
+
+Edite o arquivo `intelbras-config.json` e configure as opções de autenticação:
 
 ```json
 {
   "rtspServer": {
     "port": 8554,
-    "rtcpPort": 8555
+    "rtcpPort": 8555,
+    "requireAuth": true,
+    "defaultUsername": "admin",
+    "defaultPassword": "admin"
+  },
+  ...
+  "streamSettings": {
+    "camera1": {
+      "name": "Câmera Frontal",
+      "enableRtsp": true,
+      "rtspPath": "/camera1",
+      "rtspUsername": "admin",
+      "rtspPassword": "1234",
+      ...
+    }
+  }
+}
+```
+
+Você pode definir credenciais globais com `defaultUsername` e `defaultPassword`, ou configurar credenciais específicas para cada câmera com `rtspUsername` e `rtspPassword`.
+
+### Configuração Geral
+
+A configuração completa é feita através do arquivo `intelbras-config.json`. Exemplo:
+
+```json
+{
+  "rtspServer": {
+    "port": 8554,
+    "rtcpPort": 8555,
+    "requireAuth": true,
+    "defaultUsername": "admin",
+    "defaultPassword": "admin"
   },
   "rtmpToRtsp": {
     "enabled": true,
@@ -76,6 +126,8 @@ A configuração é feita através do arquivo `intelbras-config.json`. Exemplo:
       "name": "Câmera Frontal",
       "enableRtsp": true,
       "rtspPath": "/camera1",
+      "rtspUsername": "admin",
+      "rtspPassword": "1234",
       "dvrIntegration": true,
       "dvrIp": "192.168.1.100",
       "dvrUsername": "admin",
@@ -98,10 +150,10 @@ rtmp://seu-servidor:1936/live/camera1
 
 ### 2. Acessar streams RTSP
 
-Os streams estarão disponíveis via RTSP:
+Os streams estarão disponíveis via RTSP com autenticação:
 
 ```
-rtsp://seu-servidor:8554/camera1
+rtsp://usuário:senha@seu-servidor:8554/camera1
 ```
 
 ### 3. Configurar DVR Intelbras
@@ -110,7 +162,8 @@ rtsp://seu-servidor:8554/camera1
 2. Vá para Câmera > Adicionar Câmera
 3. Selecione adição manual
 4. Configure o endereço RTSP: `rtsp://seu-servidor:8554/camera1`
-5. Use o método de conexão TCP
+5. Configure credenciais: usuário e senha (definidos na configuração)
+6. Use o método de conexão TCP
 
 ## Teste da Integração
 
@@ -147,13 +200,14 @@ ps aux | grep "ffmpeg.*rtsp"
 ### 3. Testar conexão RTSP
 
 ```
-ffplay -rtsp_transport tcp rtsp://seu-servidor:8554/camera1
+ffplay -rtsp_transport tcp "rtsp://usuario:senha@seu-servidor:8554/camera1"
 ```
 
 ### 4. Problemas comuns
 
 * **O DVR não detecta o stream RTSP**: Verifique se está usando TCP como método de transporte RTSP
 * **Erro de conexão recusada**: Verifique se a porta 8554 está aberta no firewall
+* **Erro de autenticação**: Verifique se as credenciais de usuário e senha estão corretas
 * **Stream RTMP funciona mas RTSP não**: Verifique se o FFmpeg está instalado corretamente
 
 ## Integrando com modelos específicos de DVR Intelbras
@@ -163,12 +217,14 @@ ffplay -rtsp_transport tcp rtsp://seu-servidor:8554/camera1
 - Suporta até 720p via RTSP (recomendado)
 - Conexão: TCP
 - Codec: H.264
+- Requer autenticação para fontes RTSP
 
 ### MHDX 1104
 
 - Suporta até 1080p via RTSP
 - Conexão: TCP
 - Codec: H.264
+- Requer autenticação para fontes RTSP
 
 ## Limitações
 

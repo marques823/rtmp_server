@@ -21,6 +21,9 @@ services:
       - HTTP_PORT=8090
       - RTSP_PORT=8554
       - RTSP_RTCP_PORT=8555
+      - RTSP_REQUIRE_AUTH=true
+      - RTSP_DEFAULT_USERNAME=admin
+      - RTSP_DEFAULT_PASSWORD=admin
       - FFMPEG_PATH=/usr/bin/ffmpeg
       - LOG_TYPE=3  # 0-none, 1-error, 2-warn, 3-info, 4-debug
       - TZ=America/Sao_Paulo

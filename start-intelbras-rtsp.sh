@@ -34,6 +34,9 @@ export RTMP_PORT=1936
 export HTTP_PORT=8090
 export RTSP_PORT=8554
 export RTSP_RTCP_PORT=8555
+export RTSP_REQUIRE_AUTH=true
+export RTSP_DEFAULT_USERNAME=admin
+export RTSP_DEFAULT_PASSWORD=admin
 export FFMPEG_PATH=$(which ffmpeg)
 export LOG_TYPE=3
 export STORAGE_ENABLED=true
@@ -41,6 +44,14 @@ export ENABLE_MP4_RECORDING=true
 export STORAGE_MAX_AGE_DAYS=7
 export STORAGE_MAX_SPACE_GB=10
 export RTMP_TO_RTSP_ENABLED=true
+
+# Carregar credenciais personalizadas, se existirem
+if [ -f ".rtsp_auth" ]; then
+    echo "Carregando credenciais RTSP personalizadas..."
+    source .rtsp_auth
+fi
+
+echo "Usando autenticação RTSP: Usuário=$RTSP_DEFAULT_USERNAME"
 
 # Iniciar o servidor em segundo plano
 node server.js > logs/server.log 2>&1 &

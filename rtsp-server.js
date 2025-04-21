@@ -14,7 +14,10 @@ const NodeRtspServer = require('node-rtsp-server');
 let config = {
   rtspServer: {
     port: process.env.RTSP_PORT || 8554,
-    rtcpPort: process.env.RTSP_RTCP_PORT || 8555
+    rtcpPort: process.env.RTSP_RTCP_PORT || 8555,
+    requireAuth: process.env.RTSP_REQUIRE_AUTH === 'true' || false,
+    defaultUsername: process.env.RTSP_DEFAULT_USERNAME || 'admin',
+    defaultPassword: process.env.RTSP_DEFAULT_PASSWORD || 'admin'
   },
   rtmpToRtsp: {
     enabled: process.env.RTMP_TO_RTSP_ENABLED === 'true' || true,
@@ -74,22 +77,64 @@ class RtspStreamManager {
     this.streams = new Map();
     this.rtspServer = null;
     this.converters = new Map();
+    this.authUsers = new Map();
+  }
+  
+  // Função para verificar credenciais para autenticação RTSP
+  verifyCredentials(username, password, streamPath) {
+    console.log(`Tentativa de autenticação RTSP: usuário=${username}, caminho=${streamPath}`);
+    
+    // Se não exigir autenticação, permitir acesso
+    if (!config.rtspServer.requireAuth) {
+      return true;
+    }
+    
+    // Extrair o nome do stream do caminho
+    const streamKey = streamPath.split('/').filter(Boolean).pop();
+    
+    // Verificar se há configurações específicas para esta câmera
+    if (streamKey && config.streamSettings && config.streamSettings[streamKey]) {
+      const streamConfig = config.streamSettings[streamKey];
+      
+      // Verificar se câmera tem credenciais específicas
+      if (streamConfig.rtspUsername && streamConfig.rtspPassword) {
+        return (username === streamConfig.rtspUsername && 
+                password === streamConfig.rtspPassword);
+      }
+    }
+    
+    // Caso não encontre configurações específicas, usar padrão
+    return (username === config.rtspServer.defaultUsername && 
+            password === config.rtspServer.defaultPassword);
   }
   
   // Inicializar servidor RTSP
   async start() {
     await checkFfmpeg();
     
-    // Inicializar servidor RTSP
-    this.rtspServer = new NodeRtspServer({
+    // Inicializar servidor RTSP com suporte a autenticação
+    const serverConfig = {
       serverPort: config.rtspServer.port,
       rtcpServerPort: config.rtspServer.rtcpPort,
       clientPort: 0,
       rtcpClientPort: 0
-    });
+    };
+    
+    // Adicionar autenticação se configurado
+    if (config.rtspServer.requireAuth) {
+      serverConfig.authenticate = this.verifyCredentials.bind(this);
+      console.log('Autenticação RTSP habilitada');
+    }
+    
+    this.rtspServer = new NodeRtspServer(serverConfig);
     
     this.rtspServer.start();
     console.log(`Servidor RTSP iniciado na porta ${config.rtspServer.port} (RTCP: ${config.rtspServer.rtcpPort})`);
+    if (config.rtspServer.requireAuth) {
+      console.log(`Autenticação obrigatória: Usuário padrão '${config.rtspServer.defaultUsername}'`);
+    } else {
+      console.log('Autenticação RTSP desabilitada - acesso anônimo permitido');
+    }
     
     // Inicializar conversores para streams configurados
     if (config.rtmpToRtsp.enabled && config.rtmpToRtsp.autoConvert) {

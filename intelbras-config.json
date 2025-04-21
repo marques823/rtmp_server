@@ -1,7 +1,10 @@
 {
   "rtspServer": {
     "port": 8554,
-    "rtcpPort": 8555
+    "rtcpPort": 8555,
+    "requireAuth": true,
+    "defaultUsername": "admin",
+    "defaultPassword": "admin"
   },
   "rtmpToRtsp": {
     "enabled": true,
@@ -27,6 +30,8 @@
       "name": "Câmera Frontal",
       "enableRtsp": true,
       "rtspPath": "/camera1",
+      "rtspUsername": "admin",
+      "rtspPassword": "1234",
       "dvrIntegration": true,
       "dvrIp": "192.168.1.100",
       "dvrUsername": "admin",
@@ -37,6 +42,8 @@
       "name": "Câmera Fundos",
       "enableRtsp": true,
       "rtspPath": "/camera2",
+      "rtspUsername": "admin",
+      "rtspPassword": "1234",
       "dvrIntegration": true,
       "dvrIp": "192.168.1.100",
       "dvrUsername": "admin",
