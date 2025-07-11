@@ -28,7 +28,7 @@ Para execução com Docker:
 
 1. Clone o repositório:
    ```bash
-   git clone https://github.com/seu-usuario/rtmp-server.git
+   git clone https://github.com/marques823/rtmp-server.git
    cd rtmp-server
    ```
 
@@ -61,7 +61,7 @@ Para execução com Docker:
 
 1. Clone o repositório:
    ```bash
-   git clone https://github.com/seu-usuario/rtmp-server.git
+   git clone https://github.com/marques823/rtmp-server.git
    cd rtmp-server
    ```
 
